@@ -1,11 +1,11 @@
 # Data analysis
-pandas
-numpy
+pandas==3.0.6
+numpy==2.5.4
 
 # Visualization
-matplotlib
-seaborn
+matplotlib==3.11.2
+seaborn==0.13.2
 
 # Notebooks
-jupyterlab
-ipykernel
+jupyterlab==4.6.4
+ipykernel==7.4.0
