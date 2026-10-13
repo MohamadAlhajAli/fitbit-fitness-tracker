@@ -1,0 +1,11 @@
+# Data analysis
+pandas
+numpy
+
+# Visualization
+matplotlib
+seaborn
+
+# Notebooks
+jupyterlab
+ipykernel

@@ -1,0 +1,40 @@
+name: Project CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-environment:
+    name: Check Python environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Check dependency compatibility
+        run: python -m pip check
+
+      - name: Verify package imports
+        run: >-
+          python -c "import pandas, numpy, matplotlib,
+          seaborn, jupyterlab, ipykernel;
+          print('All imports passed')"
