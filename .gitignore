@@ -1,0 +1,17 @@
+# Raw datasets
+Dataset/
+
+# Python virtual environment
+.venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Jupyter temporary checkpoints
+.ipynb_checkpoints/
+
+# Local secrets and configuration
+.env
+.env.*
+!.env.example
