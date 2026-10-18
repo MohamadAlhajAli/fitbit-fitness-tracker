@@ -1,8 +1,9 @@
 # Fitbit data notes
 
-Updated: 2026-10-18
+Updated: 2026-10-19
 
 This file records findings checked during our EDA.
+It also keeps clearly marked meaning guesses for later checking.
 Findings from the old Docs folder are not included.
 
 ## 1. Input inventory
@@ -188,23 +189,420 @@ Formats that worked for all recorded values in the mapped columns:
 - Keep the observed timestamps unchanged. Do not trim or shift them to match folder labels.
 - Successful parsing does not prove correct timestamp alignment. Minimum and maximum dates do not prove continuous coverage.
 
-**Follow-up in 5.7:** check cross-export overlap for all corresponding file types, not just daily activity. Compare verified keys and values before deciding whether records are identical or conflicting.
+**Follow-up in 6.6:** check cross-export overlap for all corresponding file types, not just daily activity. Compare verified keys and values before deciding whether records are identical or conflicting.
 
 ### Checks still to do
 
 - **Possible partial days:** P1 minute activity ends April 12 at 10:59, and heart rate at 11:03:15. P2 minute activity ends May 12 at 15:59, and heart rate at 16:20. Daily activity includes both dates. Check coverage for each person before deciding whether any daily totals cover only part of a day. File-level end times alone do not prove this. These end times do not apply to every table: P2 wide files extend into May 13.
-- **Sleep overlap (5.7):** P1 minute sleep ends April 12 at 08:35, while P2 starts April 11 at 20:48. Their time ranges overlap. Compare participant IDs, timestamps, log IDs and values using checked keys to see whether records or nights repeat. No repeated records have been established yet.
+- **Sleep overlap (6.6):** P1 minute sleep ends April 12 at 08:35, while P2 starts April 11 at 20:48. Their time ranges overlap. Compare participant IDs, timestamps, log IDs and values using checked keys to see whether records or nights repeat. No repeated records have been established yet.
 
 Evidence: [Simple EDA notebook](<../EDA/Simple EDA.ipynb>), Step 2.4 full-file date report; this also provides the ranges for 2.5.
 
-## 7. Not checked yet
+## 7. Files, columns and guessed meanings
+
+**Status: all meanings below are unverified guesses.** They come from column names and the Step 2.3 previews, not provider documentation. We will check them in Step 3.2. Units, codes, scaling and day-assignment rules remain unconfirmed.
+
+The 29 CSV files contain 220 distinct column names. These tables cover every file, with wide column groups shortened below. Files with the same filename share one heading, with a separate table for each export. This does not mean their records can be combined.
+
+For each wide prefix (Calories, Intensity and Steps), only columns 00, 01 and 02 are shown. The other numbered columns follow the same pattern. Whether each slot represents a minute still needs checking.
+
+The examples below show the first two records from each CSV, with fields displayed vertically for easier reading. Both exports are shown when a file exists in P1 and P2. Values and original IDs stay unchanged; `""` means an empty CSV field. These are examples, not representative samples.
+
+**Observed formats and empty cells - saved Step 3.1 results (2026-10-19):**
+- The dictionary has 311 file/export/column entries and 220 distinct column names.
+- Shared filename/column pairs have matching inferred types across P1 and P2.
+- The review shows no mixed/text or all-empty columns.
+- Only `Fat` has empty strings: P1 has 2 non-empty and 31 empty values; P2 has 2 non-empty and 65 empty values.
+- These are text-format and empty-string checks, not provider-confirmed meanings or a full missing-token audit. The updated Step 3.1 cells were run and saved by the author; code and saved results were reviewed on 2026-10-19 with no saved errors.
+
+Evidence: saved dictionary and comparison outputs in Step 3.1 of [Simple EDA](<../EDA/Simple EDA.ipynb>).
+
+
+### dailyActivity_merged.csv
+
+**Exports:** P1, P2. **Columns:** 15.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityDate` | Date of the daily activity record | `3/25/2016` | `3/26/2016` |
+| `TotalSteps` | Daily step total | `11004` | `17609` |
+| `TotalDistance` | Total distance for the record's period | `7.1100001335144` | `11.5500001907349` |
+| `TrackerDistance` | Distance recorded by the tracker | `7.1100001335144` | `11.5500001907349` |
+| `LoggedActivitiesDistance` | Distance linked to logged activities | `0` | `0` |
+| `VeryActiveDistance` | Distance labelled very active | `2.5699999332428` | `6.92000007629395` |
+| `ModeratelyActiveDistance` | Distance labelled moderately active | `0.46000000834465` | `0.730000019073486` |
+| `LightActiveDistance` | Distance labelled lightly active | `4.07000017166138` | `3.91000008583069` |
+| `SedentaryActiveDistance` | Distance linked to the sedentary category | `0` | `0` |
+| `VeryActiveMinutes` | Minutes labelled very active | `33` | `89` |
+| `FairlyActiveMinutes` | Minutes labelled fairly active | `12` | `17` |
+| `LightlyActiveMinutes` | Minutes labelled lightly active | `205` | `274` |
+| `SedentaryMinutes` | Minutes labelled sedentary | `804` | `588` |
+| `Calories` | Calorie value for the labelled day; exact definition and unit unverified | `1819` | `2154` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityDate` | Date of the daily activity record | `4/12/2016` | `4/13/2016` |
+| `TotalSteps` | Daily step total | `13162` | `10735` |
+| `TotalDistance` | Total distance for the record's period | `8.5` | `6.96999979019165` |
+| `TrackerDistance` | Distance recorded by the tracker | `8.5` | `6.96999979019165` |
+| `LoggedActivitiesDistance` | Distance linked to logged activities | `0` | `0` |
+| `VeryActiveDistance` | Distance labelled very active | `1.87999999523163` | `1.57000005245209` |
+| `ModeratelyActiveDistance` | Distance labelled moderately active | `0.550000011920929` | `0.689999997615814` |
+| `LightActiveDistance` | Distance labelled lightly active | `6.05999994277954` | `4.71000003814697` |
+| `SedentaryActiveDistance` | Distance linked to the sedentary category | `0` | `0` |
+| `VeryActiveMinutes` | Minutes labelled very active | `25` | `21` |
+| `FairlyActiveMinutes` | Minutes labelled fairly active | `13` | `19` |
+| `LightlyActiveMinutes` | Minutes labelled lightly active | `328` | `217` |
+| `SedentaryMinutes` | Minutes labelled sedentary | `728` | `776` |
+| `Calories` | Calorie value for the labelled day; exact definition and unit unverified | `1985` | `1797` |
+
+### dailyCalories_merged.csv
+
+**Exports:** P2. **Columns:** 3.
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityDay` | Date of the daily record | `4/12/2016` | `4/13/2016` |
+| `Calories` | Calorie value for the labelled day; exact definition and unit unverified | `1985` | `1797` |
+
+### dailyIntensities_merged.csv
+
+**Exports:** P2. **Columns:** 10.
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityDay` | Date of the daily record | `4/12/2016` | `4/13/2016` |
+| `SedentaryMinutes` | Minutes labelled sedentary | `728` | `776` |
+| `LightlyActiveMinutes` | Minutes labelled lightly active | `328` | `217` |
+| `FairlyActiveMinutes` | Minutes labelled fairly active | `13` | `19` |
+| `VeryActiveMinutes` | Minutes labelled very active | `25` | `21` |
+| `SedentaryActiveDistance` | Distance linked to the sedentary category | `0` | `0` |
+| `LightActiveDistance` | Distance labelled lightly active | `6.05999994277954` | `4.71000003814697` |
+| `ModeratelyActiveDistance` | Distance labelled moderately active | `0.550000011920929` | `0.689999997615814` |
+| `VeryActiveDistance` | Distance labelled very active | `1.87999999523163` | `1.57000005245209` |
+
+### dailySteps_merged.csv
+
+**Exports:** P2. **Columns:** 3.
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityDay` | Date of the daily record | `4/12/2016` | `4/13/2016` |
+| `StepTotal` | Step total for the record's period | `13162` | `10735` |
+
+### heartrate_seconds_merged.csv
+
+**Exports:** P1, P2. **Columns:** 3.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `2022484408` | `2022484408` |
+| `Time` | Time linked to the heart-rate reading | `4/1/2016 7:54:00 AM` | `4/1/2016 7:54:05 AM` |
+| `Value` | Heart-rate reading; unit unconfirmed | `93` | `91` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `2022484408` | `2022484408` |
+| `Time` | Time linked to the heart-rate reading | `4/12/2016 7:21:00 AM` | `4/12/2016 7:21:05 AM` |
+| `Value` | Heart-rate reading; unit unconfirmed | `97` | `102` |
+
+### hourlyCalories_merged.csv
+
+**Exports:** P1, P2. **Columns:** 3.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `3/12/2016 12:00:00 AM` | `3/12/2016 1:00:00 AM` |
+| `Calories` | Calorie value for the labelled hour; exact definition and unit unverified | `48` | `48` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `4/12/2016 12:00:00 AM` | `4/12/2016 1:00:00 AM` |
+| `Calories` | Calorie value for the labelled hour; exact definition and unit unverified | `81` | `61` |
+
+### hourlyIntensities_merged.csv
+
+**Exports:** P1, P2. **Columns:** 4.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `3/12/2016 12:00:00 AM` | `3/12/2016 1:00:00 AM` |
+| `TotalIntensity` | Total activity intensity | `0` | `0` |
+| `AverageIntensity` | Average activity intensity | `0` | `0` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `4/12/2016 12:00:00 AM` | `4/12/2016 1:00:00 AM` |
+| `TotalIntensity` | Total activity intensity | `20` | `8` |
+| `AverageIntensity` | Average activity intensity | `0.333333` | `0.133333` |
+
+### hourlySteps_merged.csv
+
+**Exports:** P1, P2. **Columns:** 3.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `3/12/2016 12:00:00 AM` | `3/12/2016 1:00:00 AM` |
+| `StepTotal` | Step total for the record's period | `0` | `0` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `4/12/2016 12:00:00 AM` | `4/12/2016 1:00:00 AM` |
+| `StepTotal` | Step total for the record's period | `373` | `160` |
+
+### minuteCaloriesNarrow_merged.csv
+
+**Exports:** P1, P2. **Columns:** 3.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityMinute` | Minute linked to the record | `3/12/2016 12:00:00 AM` | `3/12/2016 12:01:00 AM` |
+| `Calories` | Calorie value for the labelled minute; exact definition and unit unverified | `0.797299981117249` | `0.797299981117249` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityMinute` | Minute linked to the record | `4/12/2016 12:00:00 AM` | `4/12/2016 12:01:00 AM` |
+| `Calories` | Calorie value for the labelled minute; exact definition and unit unverified | `0.786499977111816` | `0.786499977111816` |
+
+### minuteCaloriesWide_merged.csv
+
+**Exports:** P2. **Columns:** 62.
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `4/13/2016 12:00:00 AM` | `4/13/2016 1:00:00 AM` |
+| `Calories00` | Calories value for slot 00 within the recorded hour; slot duration unknown | `1.88759994506836` | `0.786499977111816` |
+| `Calories01` | Calories value for slot 01 within the recorded hour; slot duration unknown | `2.20219993591309` | `0.786499977111816` |
+| `Calories02` | Calories value for slot 02 within the recorded hour; slot duration unknown | `0.94379997253418` | `0.786499977111816` |
+
+Only `Calories00`-`Calories02` are shown; `Calories03`-`Calories59` are omitted from this view. The CSV still has 62 columns.
+
+### minuteIntensitiesNarrow_merged.csv
+
+**Exports:** P1, P2. **Columns:** 3.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityMinute` | Minute linked to the record | `3/12/2016 12:00:00 AM` | `3/12/2016 12:01:00 AM` |
+| `Intensity` | Activity intensity value or code | `0` | `0` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityMinute` | Minute linked to the record | `4/12/2016 12:00:00 AM` | `4/12/2016 12:01:00 AM` |
+| `Intensity` | Activity intensity value or code | `0` | `0` |
+
+### minuteIntensitiesWide_merged.csv
+
+**Exports:** P2. **Columns:** 62.
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `4/13/2016 12:00:00 AM` | `4/13/2016 1:00:00 AM` |
+| `Intensity00` | Intensity value for slot 00 within the recorded hour; slot duration unknown | `1` | `0` |
+| `Intensity01` | Intensity value for slot 01 within the recorded hour; slot duration unknown | `1` | `0` |
+| `Intensity02` | Intensity value for slot 02 within the recorded hour; slot duration unknown | `0` | `0` |
+
+Only `Intensity00`-`Intensity02` are shown; `Intensity03`-`Intensity59` are omitted from this view. The CSV still has 62 columns.
+
+### minuteMETsNarrow_merged.csv
+
+**Exports:** P1, P2. **Columns:** 3.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityMinute` | Minute linked to the record | `3/12/2016 12:00:00 AM` | `3/12/2016 12:01:00 AM` |
+| `METs` | MET-related activity measure; scaling unknown | `10` | `10` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityMinute` | Minute linked to the record | `4/12/2016 12:00:00 AM` | `4/12/2016 12:01:00 AM` |
+| `METs` | MET-related activity measure; scaling unknown | `10` | `10` |
+
+### minuteSleep_merged.csv
+
+**Exports:** P1, P2. **Columns:** 4.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `date` | Time linked to the sleep record | `3/13/2016 2:39:30 AM` | `3/13/2016 2:40:30 AM` |
+| `value` | Sleep-related value or code; meaning unknown | `1` | `1` |
+| `logId` | Sleep log identifier | `11114919637` | `11114919637` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `date` | Time linked to the sleep record | `4/12/2016 2:47:30 AM` | `4/12/2016 2:48:30 AM` |
+| `value` | Sleep-related value or code; meaning unknown | `3` | `2` |
+| `logId` | Sleep log identifier | `11380564589` | `11380564589` |
+
+### minuteStepsNarrow_merged.csv
+
+**Exports:** P1, P2. **Columns:** 3.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityMinute` | Minute linked to the record | `3/12/2016 12:00:00 AM` | `3/12/2016 12:01:00 AM` |
+| `Steps` | Steps for the record's period | `0` | `0` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityMinute` | Minute linked to the record | `4/12/2016 12:00:00 AM` | `4/12/2016 12:01:00 AM` |
+| `Steps` | Steps for the record's period | `0` | `0` |
+
+### minuteStepsWide_merged.csv
+
+**Exports:** P2. **Columns:** 62.
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `ActivityHour` | Hour linked to the record | `4/13/2016 12:00:00 AM` | `4/13/2016 1:00:00 AM` |
+| `Steps00` | Steps value for slot 00 within the recorded hour; slot duration unknown | `4` | `0` |
+| `Steps01` | Steps value for slot 01 within the recorded hour; slot duration unknown | `16` | `0` |
+| `Steps02` | Steps value for slot 02 within the recorded hour; slot duration unknown | `0` | `0` |
+
+Only `Steps00`-`Steps02` are shown; `Steps03`-`Steps59` are omitted from this view. The CSV still has 62 columns.
+
+### sleepDay_merged.csv
+
+**Exports:** P2. **Columns:** 5.
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `SleepDay` | Date assigned to the sleep summary | `4/12/2016 12:00:00 AM` | `4/13/2016 12:00:00 AM` |
+| `TotalSleepRecords` | Number of sleep records in the daily summary | `1` | `2` |
+| `TotalMinutesAsleep` | Daily summary of minutes asleep | `327` | `384` |
+| `TotalTimeInBed` | Daily summary of time in bed; unit unconfirmed | `346` | `407` |
+
+### weightLogInfo_merged.csv
+
+**Exports:** P1, P2. **Columns:** 8.
+
+**P1**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1927972279` |
+| `Date` | Time linked to the weight record | `4/5/2016 11:59:59 PM` | `4/10/2016 6:33:26 PM` |
+| `WeightKg` | Weight labelled in kilograms | `53.2999992370605` | `129.600006103516` |
+| `WeightPounds` | Weight labelled in pounds | `117.506384062611` | `285.719105247709` |
+| `Fat` | Body-fat measure; unit unknown | `22` | `""` |
+| `BMI` | Body mass index value | `22.9699993133545` | `46.1699981689453` |
+| `IsManualReport` | Whether the record was entered manually | `True` | `False` |
+| `LogId` | Weight log identifier | `1459900799000` | `1460313206000` |
+
+**P2**
+
+| Column | Guessed meaning | Record 1 | Record 2 |
+|---|---|---|---|
+| `Id` | Participant identifier | `1503960366` | `1503960366` |
+| `Date` | Time linked to the weight record | `5/2/2016 11:59:59 PM` | `5/3/2016 11:59:59 PM` |
+| `WeightKg` | Weight labelled in kilograms | `52.5999984741211` | `52.5999984741211` |
+| `WeightPounds` | Weight labelled in pounds | `115.963146545323` | `115.963146545323` |
+| `Fat` | Body-fat measure; unit unknown | `22` | `""` |
+| `BMI` | Body mass index value | `22.6499996185303` | `22.6499996185303` |
+| `IsManualReport` | Whether the record was entered manually | `True` | `True` |
+| `LogId` | Weight log identifier | `1462233599000` | `1462319999000` |
+
+Source: `EDA/input_manifest.csv`, the listed CSV headers, and the `MEANING_GUESSES` cell in [Simple EDA](<../EDA/Simple EDA.ipynb>). This section does not confirm types, keys or field meanings.
+
+### Possible repeated measures across files - Step 6.3
+
+Noted 2026-10-19 from the field names and previews. These are comparisons to do, not confirmed duplicate records.
+
+| Measure to compare | Files in P2 | Check later |
+|---|---|---|
+| `Calories` | `dailyCalories_merged.csv` and `dailyActivity_merged.csv` | Compare the values for each matching participant and day. |
+| `SedentaryMinutes` and other shared activity fields | `dailyIntensities_merged.csv` and `dailyActivity_merged.csv` | Compare all shared minute and distance fields, starting with `SedentaryMinutes`. |
+| Steps: `StepTotal` versus `TotalSteps` | `dailySteps_merged.csv` and `dailyActivity_merged.csv` | Check whether the differently named fields contain the same daily values. |
+
+Use the keys checked in Step 4. Match `Id` and the day (`ActivityDay` in the separate daily files, `ActivityDate` in daily activity). Report matching values, unmatched keys and conflicting values before deciding whether a file or field is redundant. Other possible repeated measures are also checked in Step 6.
+
+## 8. Not checked yet
 
 The checks above do not establish:
 - Participant counts.
 - What one row represents or which keys are valid.
 - Recording gaps and per-participant date coverage.
-- Field meanings, units, and non-date value types.
-- Missing values in non-date fields, duplicate records, or conflicting values.
+- Provider-confirmed field meanings, units, scaling and code definitions.
+- Missing-value tokens beyond empty strings, duplicate records, or conflicting values.
 - Whether the two exports can be combined.
 
 Add these findings only after the relevant EDA checks.
