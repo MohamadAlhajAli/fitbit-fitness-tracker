@@ -1,6 +1,6 @@
 # Fitbit data notes
 
-Updated: 2026-10-17
+Updated: 2026-10-18
 
 This file records findings checked during our EDA.
 Findings from the old Docs folder are not included.
@@ -130,14 +130,81 @@ These groups describe headers only, not matching values or meanings.
 Evidence: [Simple EDA notebook](<../EDA/Simple EDA.ipynb>),
 Step 2 row counts and header grouping.
 
-## 6. Not checked yet
+## 6. Date parsing and observed ranges
+
+All 29 files were checked in full using 100,000-row chunks.
+Each file matched its earlier row count. Every date value parsed:
+
+- No empty dates.
+- No parsing failures; the failure rate was 0% in every file.
+- Original date text was left unchanged.
+- No timezone was assigned. The source timezone remains unknown.
+
+Formats that worked for all recorded values in the mapped columns:
+
+- `ActivityDate`, `ActivityDay`: `%m/%d/%Y`.
+- `Time`, `ActivityHour`, `ActivityMinute`, `date`, `Date`, `SleepDay`: `%m/%d/%Y %I:%M:%S %p`.
+
+### Full-file date ranges
+
+| Export | Filename | Date column | Earliest | Latest |
+|---|---|---|---|---|
+| P1 | dailyActivity_merged.csv | ActivityDate | 2016-03-12 00:00:00 | 2016-04-12 00:00:00 |
+| P1 | heartrate_seconds_merged.csv | Time | 2016-03-29 00:00:05 | 2016-04-12 11:03:15 |
+| P1 | hourlyCalories_merged.csv | ActivityHour | 2016-03-12 00:00:00 | 2016-04-12 10:00:00 |
+| P1 | hourlyIntensities_merged.csv | ActivityHour | 2016-03-12 00:00:00 | 2016-04-12 10:00:00 |
+| P1 | hourlySteps_merged.csv | ActivityHour | 2016-03-12 00:00:00 | 2016-04-12 10:00:00 |
+| P1 | minuteCaloriesNarrow_merged.csv | ActivityMinute | 2016-03-12 00:00:00 | 2016-04-12 10:59:00 |
+| P1 | minuteIntensitiesNarrow_merged.csv | ActivityMinute | 2016-03-12 00:00:00 | 2016-04-12 10:59:00 |
+| P1 | minuteMETsNarrow_merged.csv | ActivityMinute | 2016-03-12 00:00:00 | 2016-04-12 10:59:00 |
+| P1 | minuteSleep_merged.csv | date | 2016-03-11 21:19:30 | 2016-04-12 08:35:00 |
+| P1 | minuteStepsNarrow_merged.csv | ActivityMinute | 2016-03-12 00:00:00 | 2016-04-12 10:59:00 |
+| P1 | weightLogInfo_merged.csv | Date | 2016-03-30 23:59:59 | 2016-04-12 23:59:59 |
+| P2 | dailyActivity_merged.csv | ActivityDate | 2016-04-12 00:00:00 | 2016-05-12 00:00:00 |
+| P2 | dailyCalories_merged.csv | ActivityDay | 2016-04-12 00:00:00 | 2016-05-12 00:00:00 |
+| P2 | dailyIntensities_merged.csv | ActivityDay | 2016-04-12 00:00:00 | 2016-05-12 00:00:00 |
+| P2 | dailySteps_merged.csv | ActivityDay | 2016-04-12 00:00:00 | 2016-05-12 00:00:00 |
+| P2 | heartrate_seconds_merged.csv | Time | 2016-04-12 00:00:00 | 2016-05-12 16:20:00 |
+| P2 | hourlyCalories_merged.csv | ActivityHour | 2016-04-12 00:00:00 | 2016-05-12 15:00:00 |
+| P2 | hourlyIntensities_merged.csv | ActivityHour | 2016-04-12 00:00:00 | 2016-05-12 15:00:00 |
+| P2 | hourlySteps_merged.csv | ActivityHour | 2016-04-12 00:00:00 | 2016-05-12 15:00:00 |
+| P2 | minuteCaloriesNarrow_merged.csv | ActivityMinute | 2016-04-12 00:00:00 | 2016-05-12 15:59:00 |
+| P2 | minuteCaloriesWide_merged.csv | ActivityHour | 2016-04-13 00:00:00 | 2016-05-13 08:00:00 |
+| P2 | minuteIntensitiesNarrow_merged.csv | ActivityMinute | 2016-04-12 00:00:00 | 2016-05-12 15:59:00 |
+| P2 | minuteIntensitiesWide_merged.csv | ActivityHour | 2016-04-13 00:00:00 | 2016-05-13 08:00:00 |
+| P2 | minuteMETsNarrow_merged.csv | ActivityMinute | 2016-04-12 00:00:00 | 2016-05-12 15:59:00 |
+| P2 | minuteSleep_merged.csv | date | 2016-04-11 20:48:00 | 2016-05-12 09:56:00 |
+| P2 | minuteStepsNarrow_merged.csv | ActivityMinute | 2016-04-12 00:00:00 | 2016-05-12 15:59:00 |
+| P2 | minuteStepsWide_merged.csv | ActivityHour | 2016-04-13 00:00:00 | 2016-05-13 08:00:00 |
+| P2 | sleepDay_merged.csv | SleepDay | 2016-04-12 00:00:00 | 2016-05-12 00:00:00 |
+| P2 | weightLogInfo_merged.csv | Date | 2016-04-12 06:47:11 | 2016-05-12 23:59:59 |
+
+### Findings and limits
+
+- Daily activity includes April 12 in both exports. Duplicate participant records have not been established.
+- P1 minute sleep starts on March 11; P2 minute sleep starts on April 11, before their folder start labels. The reason has not been checked.
+- P2 wide files span April 13-May 13; P2 narrow minute files span April 12-May 12. The reason for this difference is not yet known.
+- Coverage differs by file. P1 heart-rate data starts on March 29, while daily activity starts on March 12.
+- Keep the observed timestamps unchanged. Do not trim or shift them to match folder labels.
+- Successful parsing does not prove correct timestamp alignment. Minimum and maximum dates do not prove continuous coverage.
+
+**Follow-up in 5.7:** check cross-export overlap for all corresponding file types, not just daily activity. Compare verified keys and values before deciding whether records are identical or conflicting.
+
+### Checks still to do
+
+- **Possible partial days:** P1 minute activity ends April 12 at 10:59, and heart rate at 11:03:15. P2 minute activity ends May 12 at 15:59, and heart rate at 16:20. Daily activity includes both dates. Check coverage for each person before deciding whether any daily totals cover only part of a day. File-level end times alone do not prove this. These end times do not apply to every table: P2 wide files extend into May 13.
+- **Sleep overlap (5.7):** P1 minute sleep ends April 12 at 08:35, while P2 starts April 11 at 20:48. Their time ranges overlap. Compare participant IDs, timestamps, log IDs and values using checked keys to see whether records or nights repeat. No repeated records have been established yet.
+
+Evidence: [Simple EDA notebook](<../EDA/Simple EDA.ipynb>), Step 2.4 full-file date report; this also provides the ranges for 2.5.
+
+## 7. Not checked yet
 
 The checks above do not establish:
 - Participant counts.
 - What one row represents or which keys are valid.
-- Actual date ranges or recording gaps.
-- Field meanings, units, or data types.
-- Missing values, duplicate records, or conflicting values.
+- Recording gaps and per-participant date coverage.
+- Field meanings, units, and non-date value types.
+- Missing values in non-date fields, duplicate records, or conflicting values.
 - Whether the two exports can be combined.
 
 Add these findings only after the relevant EDA checks.
