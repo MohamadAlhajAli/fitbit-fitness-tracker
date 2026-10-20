@@ -34,7 +34,7 @@ All required fields are **provisional**: they are confirmed in Steps 2–4.
 | Q1 | For **each file in each export**: what is the grain (one row = ?), the key, the columns and their types? | High | All files | Every file in each export has a verified grain/key or a logged issue |
 | Q2 | Are the two exports comparable (same files, columns, participants, dates), and can each table be combined? | High | All files, participant IDs, dates | A combine / keep-separate / needs-a-rule verdict per table type |
 | Q3 | How many participants are there, how many days does each contribute, and which measures does each have? | High | Participant IDs, dates, each topic | Participant × measure coverage table, with gaps described |
-| Q4 | Do field values match the **provider's definitions** (codes, units, scaling)? Provider documentation is evidence; prior local interpretations are claims to check separately. | High | Coded and unit-bearing fields | Each field marked confirmed / contradicted / unknown against the provider docs; prior interpretations compared afterwards |
+| Q4 | What do the data show about each field's codes, units and scaling, and which meanings stay unknown? Prior local interpretations are claims to check separately. | High | Coded and unit-bearing fields | Each field marked **supported** (with its evidence) or **Unknown / Unverified**; prior interpretations compared afterwards |
 | Q5 | What quality problems exist (missingness, duplicates, invalid or questionable values, and conflicting records)? Every validity rule must be **justified** by provider docs, physical plausibility or a stated rationale. Rules flag; nothing is fixed. | High | All files | Issue log with evidence, the rule used, and proposed options |
 | Q6 | How is daily activity distributed across days and participants? | Medium | Daily activity totals (if present) | Profiles at both day and participant level, with counts |
 | Q7 | *(Optional)* Are there time-of-day or weekday patterns in activity? | Low | Timestamped activity (if present) | Hour/weekday profiles with contributing participants, **or** deferred to Advanced EDA |
@@ -120,6 +120,11 @@ Blocked with a reason.
 
 **Changes to the brief:** update the affected question or metric,
 then add a dated note saying what changed and why.
+
+**Change notes**
+- 2026-10-19: Q4 reworded. The separate provider-documentation search was removed
+  from Step 3, so meanings are marked supported only with evidence; otherwise
+  they stay Unknown / Unverified.
 
 
 ### 1.7 Prediction 

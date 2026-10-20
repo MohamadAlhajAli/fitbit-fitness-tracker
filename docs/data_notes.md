@@ -200,7 +200,7 @@ Evidence: [Simple EDA notebook](<../EDA/Simple EDA.ipynb>), Step 2.4 full-file d
 
 ## 7. Files, columns and guessed meanings
 
-**Status: all meanings below are unverified guesses.** They come from column names and the Step 2.3 previews, not provider documentation. We will check them in Step 3.2. Units, codes, scaling and day-assignment rules remain unconfirmed.
+**Status: all meanings below are unverified guesses.** They come from column names and the Step 2.3 previews. Values and formats were observed; meanings, units, codes, scaling and day-assignment rules remain unconfirmed.
 
 The 29 CSV files contain 220 distinct column names. These tables cover every file, with wide column groups shortened below. Files with the same filename share one heading, with a separate table for each export. This does not mean their records can be combined.
 
@@ -601,7 +601,7 @@ The checks above do not establish:
 - Participant counts.
 - What one row represents or which keys are valid.
 - Recording gaps and per-participant date coverage.
-- Provider-confirmed field meanings, units, scaling and code definitions.
+- Supported field meanings, units, scaling and code definitions.
 - Missing-value tokens beyond empty strings, duplicate records, or conflicting values.
 - Whether the two exports can be combined.
 
